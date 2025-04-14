@@ -11,6 +11,7 @@ class Button extends Widget{
     private _fontSize: number;
     private _text_y: number;
     private _text_x: number;
+    private _clickFunction: () => void;
     private defaultText: string= "Button";
     private defaultFontSize: number = 18;
     private defaultWidth: number = 80;
@@ -31,6 +32,7 @@ class Button extends Widget{
         this.setState(new IdleUpWidgetState());
         // prevent text selection
         this.selectable = false;
+        this._rect.radius(10);
     }
 
     set fontSize(size:number){
@@ -79,39 +81,94 @@ class Button extends Widget{
     
     pressReleaseState(): void{
 
-        if (this.previousState instanceof PressedWidgetState)
+        if (this.previousState instanceof PressedWidgetState) {
             this.raise(new EventArgs(this));
+            this._clickFunction();
+        }
     }
 
     //TODO: implement the onClick event using a callback passed as a parameter
-    onClick(/*TODO: add callback parameter*/):void{}
+    onClick(callback: () => void):void{
+        this._clickFunction = callback;
+    }
 
     
     //TODO: give the states something to do! Use these methods to control the visual appearance of your
     //widget
     idleupState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('pink');
+        this._text.text('Press me!');
+        this._text.font('family', 'Monaco');
+        this._text.font('weight', 'bold');
     }
     idledownState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('lightgreen');
+        this._text.text('Pressed!');
+        this._text.font('family', 'Monaco');
+        this._text.font('weight', 'bold');
     }
     pressedState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('white');
+        this._text.text('Fully Pressed!');
+        this._text.font('family', 'Arial');
+        this._text.font('weight', 'bold');
     }
     hoverState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('lightblue');
+        this._text.text('Hovering...');
+        this._text.font('family', 'Monaco');
+        this._text.font('weight', 'bold');
     }
     hoverPressedState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('blue');
+        this._text.text('Pressed while Hovering!');
+        this._text.font('family', 'Arial');
+        this._text.font('weight', 'bold');
     }
     pressedoutState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('yellow');
+        this._text.text('Pressed, but moved out!');
+        this._text.font('family', 'Monaco');
+        this._text.font('weight', 'bold');
     }
     moveState(): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('green');
+        this._text.text('Moving while pressed...');
+        this._text.font('family', 'Arial');
+        this._text.font('weight', 'bold');
     }
     keyupState(keyEvent?: KeyboardEvent): void {
-        throw new Error("Method not implemented.");
+        this._rect.fill('lavender');
+        this._text.text('Key up!');
+        this._text.font('family', 'Monaco');
+        this._text.font('weight', 'bold');
+        if (keyEvent) {
+            this._input = keyEvent.key;
+        }
+    }
+
+    get label(): string {
+        return this._input;
+    }
+
+    set label(value: string) {
+        this._input = value;
+        this.update();
+    }
+
+    get size(): number[] {
+        return [this.width, this.height];
+    }
+
+    set size(dimensions: number[]) {
+        if (dimensions.length !== 2) {
+            throw new Error("Size inputs should follow the format: [width, height]");
+        }
+        this.width = dimensions[0];
+        this.height = dimensions[1];
+        this._rect.width(this.width);
+        this._rect.height(this.height);
+        this.update();
     }
 }
 
