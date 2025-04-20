@@ -14,8 +14,8 @@ class Button extends Widget{
     private _clickFunction: () => void;
     private defaultText: string= "Button";
     private defaultFontSize: number = 18;
-    private defaultWidth: number = 80;
-    private defaultHeight: number = 30;
+    private defaultWidth: number = 150;
+    private defaultHeight: number = 40;
 
     constructor(parent:Window){
         super(parent);
@@ -32,7 +32,6 @@ class Button extends Widget{
         this.setState(new IdleUpWidgetState());
         // prevent text selection
         this.selectable = false;
-        this._rect.radius(10);
     }
 
     set fontSize(size:number){
@@ -54,13 +53,13 @@ class Button extends Widget{
         this._group = (this.parent as Window).window.group();
         this._rect = this._group.rect(this.width, this.height);
         this._rect.stroke("black");
+        this._rect.radius(10);
         this._text = this._group.text(this._input);
         // Set the outer svg element 
         this.outerSvg = this._group;
         // Add a transparent rect on top of text to 
         // prevent selection cursor and to handle mouse events
-        let eventrect = this._group.rect(this.width, this.height).opacity(0).attr('id', 0);
-
+        let eventrect = this._group.rect(this.width, this.height).move(this._rect.x(), this._rect.y()).opacity(0).attr('id', 0);
         // register objects that should receive event notifications.
         // for this widget, we want to know when the group or rect objects
         // receive events
@@ -83,7 +82,9 @@ class Button extends Widget{
 
         if (this.previousState instanceof PressedWidgetState) {
             this.raise(new EventArgs(this));
-            this._clickFunction();
+            if (this._clickFunction) {
+                this._clickFunction();
+            }
         }
     }
 
